@@ -9,6 +9,8 @@ parser.add_argument("--recipient", help="Email address of recipient")
 parser.add_argument("--server", help="SMTP server that will dispatch the message",
                     default="fafnir.cs.unc.edu")
 parser.add_argument("--addrfile", help="A file containing email addresses for a mass-email. One address per line")
+parser.add_argument("--debug", action="store_true")
+
 args = parser.parse_args()
 
 if not args.recipient and not args.addrfile:
@@ -20,7 +22,7 @@ sock.settimeout(10.0)
 
 if args.addrfile:
     with open(args.addrfile) as f:
-        addresses = f.readlines()
+        addresses = list(map(lambda x: x.strip(), f.readlines()))
 else:
     addresses = [args.recipient]
 
@@ -36,7 +38,8 @@ def abort(s):
 def send_and_ack(s,code):
     sock.sendall(s)
     rcpt = sock.recv(4096)
-    print(rcpt)
+    if(args.debug):
+      print(rcpt)
     if not rcpt[:3] == str(code):
         abort("Bad response from server")
 
