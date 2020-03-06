@@ -28,6 +28,7 @@ else:
 
 with open(args.filename) as f:
     msg = f.read()
+    msg.replace(".\n",". \n")
     n = len(msg)
 
 def abort(s):
